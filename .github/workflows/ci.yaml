@@ -14,7 +14,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Set up Docker
-      uses: docker/setup-docker@latest
+      uses: docker/setup-docker@v2
+      with:
+        docker_version: '20.10.8'
 
     - uses: aws-actions/configure-aws-credentials@v1
       with:
