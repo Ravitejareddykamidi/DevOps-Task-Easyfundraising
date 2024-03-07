@@ -5,6 +5,7 @@ on: [workflow_dispatch, push]
 env:
   ECR_REPO_NAME: easyfundraising
   TERRAFORM_VERSION: 1.7.3
+  MAJOR_VERSION: v1.0
 
 
 jobs:
@@ -30,8 +31,8 @@ jobs:
 
     - name: Increment Version
       id: increment-version
-      run: echo "::set-output name=VERSION::$(echo ${{ steps.get-latest-version.outputs.VERSION }} | awk -F. -v OFS=. '{$NF++; print $0}')"
-
+      run: echo "::set-output name=INCREMENTED_VERSION::${{ env.MAJOR_VERSION }}.$(echo "${{ steps.get-latest-version.outputs.VERSION }}" | awk -F '.' '{print "${{ env.MAJOR_VERSION }}." $2 "." $3+1}')
+      
     - name: Publish new image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
