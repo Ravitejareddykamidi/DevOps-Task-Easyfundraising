@@ -5,7 +5,7 @@ metadata:
   name: my-app
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: 654911848970.dkr.ecr.us-east-1.amazonaws.com/easyfundraising:~v1.0
+    argocd-image-updater.argoproj.io/image-list: 654911848970.dkr.ecr.us-east-1.amazonaws.com/easyfundraising:~v1
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -22,7 +22,7 @@ spec:
         - name: "image.repository"
           value: 654911848970.dkr.ecr.us-east-1.amazonaws.com/easyfundraising
         - name: "image.tag"
-          value: v1.0.1
+          value: v1.1
   destination:
     server: https://kubernetes.default.svc
     namespace: test
