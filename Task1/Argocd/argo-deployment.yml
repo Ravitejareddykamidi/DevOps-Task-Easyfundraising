@@ -5,7 +5,7 @@ metadata:
   name: my-app
   namespace: argocd
   annotations:
-    argocd-image-updater.argoproj.io/image-list: 654911848970.dkr.ecr.us-east-1.amazonaws.com/easyfundraising:~v1
+    argocd-image-updater.argoproj.io/image-list: 654911848970.dkr.ecr.us-east-1.amazonaws.com/easyfundraising:~v1.0
   finalizers:
     - resources-finalizer.argocd.argoproj.io
 spec:
@@ -23,6 +23,10 @@ spec:
           value: 654911848970.dkr.ecr.us-east-1.amazonaws.com/easyfundraising
         - name: "image.tag"
           value: v1.1
+        - name: "service.type"
+          value: LoadBalancer
+        - name: "service.servicePort"
+          value: 5000
   destination:
     server: https://kubernetes.default.svc
     namespace: test
