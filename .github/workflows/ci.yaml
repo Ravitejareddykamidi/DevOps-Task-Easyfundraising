@@ -32,7 +32,7 @@ jobs:
     - name: Increment Version
       id: increment-version
       run: |
-        INCREMENTED_VERSION="v1.0.$(echo "0.0.0" | awk -F '.' '{print $2 "." $3+1}')"
+        INCREMENTED_VERSION="v1.$(echo "0.0.0" | awk -F '.' '{print $2 "." $3+1}')"
         echo "::set-output name=INCREMENTED_VERSION::$INCREMENTED_VERSION"
 
     - name: Publish new image
