@@ -29,8 +29,8 @@ jobs:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
         TAG=${GITHUB_SHA:0:10}
-        docker build -t $ECR_REGISTRY/$ECR_REPO_NAME:v${TAG} ./Task1
-        docker push $ECR_REGISTRY/$ECR_REPO_NAME:v${TAG}
+        docker build -t $ECR_REGISTRY/$ECR_REPO_NAME:v1.0.0 ./Task1
+        docker push $ECR_REGISTRY/$ECR_REPO_NAME:v1.0.0
 
   Tf-plan-and-apply:
     runs-on: ubuntu-latest
