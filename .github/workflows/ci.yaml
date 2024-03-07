@@ -27,13 +27,17 @@ jobs:
 
     - name: Get Latest Version
       id: get-latest-version
-      run: echo "::set-output name=VERSION::$(aws ecr describe-images --repository-name ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME --query 'images[0].imageTag' --output text || echo '0.0.0')"
+      run: |
+        latest_version=$(aws ecr describe-images --repository-name ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME --query 'images[0].imageTag' --output text || echo '0.0.0')
+        echo "::set-output name=VERSION::$latest_version"
 
     - name: Increment Version
       id: increment-version
       run: |
-        INCREMENTED_VERSION="v1.$(echo "0.0.0" | awk -F '.' '{print $2 "." $3+1}')"
-        echo "::set-output name=INCREMENTED_VERSION::$INCREMENTED_VERSION"
+        current_version="${{ steps.get-latest-version.outputs.VERSION }}"
+        IFS='.' read -r major minor patch <<< "$current_version"
+        incremented_version="v1.$((patch+1))"
+        echo "::set-output name=INCREMENTED_VERSION::$incremented_version"
 
     - name: Publish new image
       env:
@@ -42,6 +46,24 @@ jobs:
         INCREMENTED_VERSION="${{ steps.increment-version.outputs.INCREMENTED_VERSION }}"
         docker build -t $ECR_REGISTRY/$ECR_REPO_NAME:$INCREMENTED_VERSION ./Task1
         docker push $ECR_REGISTRY/$ECR_REPO_NAME:$INCREMENTED_VERSION
+
+    # - name: Get Latest Version
+    #   id: get-latest-version
+    #   run: echo "::set-output name=VERSION::$(aws ecr describe-images --repository-name ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME --query 'images[0].imageTag' --output text || echo '0.0.0')"
+
+    # - name: Increment Version
+    #   id: increment-version
+    #   run: |
+    #     INCREMENTED_VERSION="v1.$(echo "0.0.0" | awk -F '.' '{print $2 "." $3+1}')"
+    #     echo "::set-output name=INCREMENTED_VERSION::$INCREMENTED_VERSION"
+
+    # - name: Publish new image
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #   run: |
+    #     INCREMENTED_VERSION="${{ steps.increment-version.outputs.INCREMENTED_VERSION }}"
+    #     docker build -t $ECR_REGISTRY/$ECR_REPO_NAME:$INCREMENTED_VERSION ./Task1
+    #     docker push $ECR_REGISTRY/$ECR_REPO_NAME:$INCREMENTED_VERSION
     # - name: Publish new image
     #   env:
     #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
