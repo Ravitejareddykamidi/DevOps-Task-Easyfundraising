@@ -1,0 +1,38 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: 654911848970.dkr.ecr.us-east-1.amazonaws.com/easyfundraising:~9ac60f3194
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: http://easyfund-helmapp.s3-website-us-east-1.amazonaws.com/charts/
+    targetRevision: 1.0.0
+    chart: easyfundraising-app
+    helm:
+      version: v3
+      releaseName: my-app
+      passCredentials: false
+      parameters:
+        - name: "image.repository"
+          value: 654911848970.dkr.ecr.us-east-1.amazonaws.com/easyfundraising
+        - name: "image.tag"
+          value: 9ac60f3194
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: test
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+      allowEmpty: false
+    syncOptions:
+      - Validate=true
+      - CreateNamespace=true
+      - PrunePropagationPolicy=foreground
+      - PruneLast=true
