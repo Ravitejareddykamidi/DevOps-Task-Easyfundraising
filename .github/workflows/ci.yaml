@@ -24,13 +24,28 @@ jobs:
     - uses: aws-actions/amazon-ecr-login@v1
       id: login-ecr
 
+    - name: Get Latest Version
+      id: get-latest-version
+      run: echo "::set-output name=VERSION::$(aws ecr describe-images --repository-name ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME --query 'images[0].imageTag' --output text || echo '0.0.0')"
+
+    - name: Increment Version
+      id: increment-version
+      run: echo "::set-output name=VERSION::$(echo ${{ steps.get-latest-version.outputs.VERSION }} | awk -F. -v OFS=. '{$NF++; print $0}')"
+
     - name: Publish new image
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
       run: |
-        TAG=${GITHUB_SHA:0:10}
-        docker build -t $ECR_REGISTRY/$ECR_REPO_NAME:v1.0.0 ./Task1
-        docker push $ECR_REGISTRY/$ECR_REPO_NAME:v1.0.0
+        docker build -t $ECR_REGISTRY/$ECR_REPO_NAME:v${{ steps.increment-version.outputs.VERSION }} ./Task1
+        docker push $ECR_REGISTRY/$ECR_REPO_NAME:v${{ steps.increment-version.outputs.VERSION }}
+
+    # - name: Publish new image
+    #   env:
+    #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+    #   run: |
+    #     TAG=${GITHUB_SHA:0:10}
+    #     docker build -t $ECR_REGISTRY/$ECR_REPO_NAME:v1.0.0 ./Task1
+    #     docker push $ECR_REGISTRY/$ECR_REPO_NAME:v1.0.0
 
   Tf-plan-and-apply:
     runs-on: ubuntu-latest
