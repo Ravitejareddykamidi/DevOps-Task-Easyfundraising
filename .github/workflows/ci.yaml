@@ -25,10 +25,16 @@ jobs:
     - uses: aws-actions/amazon-ecr-login@v1
       id: login-ecr
 
+    # - name: Get Latest Version
+    #   id: get-latest-version
+    #   run: |
+    #     latest_version=$(aws ecr describe-images --repository-name ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME --query 'images[0].imageTag' --output text || echo '0.0.0')
+    #     echo "::set-output name=VERSION::$latest_version"
+
     - name: Get Latest Version
       id: get-latest-version
       run: |
-        latest_version=$(aws ecr describe-images --repository-name ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME --query 'images[0].imageTag' --output text || echo '0.0.0')
+        latest_version=$(aws ecr describe-images --repository-name ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME --query 'images|sort_by(@, &imagePushedAt)|[-1].imageTags[0]' --output text || echo '0.0.0')
         echo "::set-output name=VERSION::$latest_version"
 
     - name: Increment Version
