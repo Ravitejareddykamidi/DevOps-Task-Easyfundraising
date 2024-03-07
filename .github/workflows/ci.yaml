@@ -4,6 +4,8 @@ on: [workflow_dispatch, push]
 
 env:
   ECR_REPO_NAME: easyfundraising
+  TERRAFORM_VERSION: 1.7.3
+
 
 jobs:
   build-and-push:
@@ -28,4 +30,36 @@ jobs:
       run: |
         TAG=${GITHUB_SHA:0:10}
         docker build -t $ECR_REGISTRY/$ECR_REPO_NAME:${TAG} ./Task1
-        docker push $ECR_REGISTRY/$ECR_REPO_NAME:${TAG} 
+        docker push $ECR_REGISTRY/$ECR_REPO_NAME:${TAG}
+
+  Tf-plan-and-apply:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: ${{ env.TERRAFORM_VERSION }}
+      
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Terraform Init
+        run: |
+          cd Task1/Terraform
+          terraform init
+      
+      - name: Terraform Plan
+        run: |
+          cd Task1/Terraform
+          terraform plan -out=tfplan
+      
+      - name: Terraform Apply
+        run: |
+          cd Task1/Terraform
+          terraform apply -auto-approve tfplan
+
