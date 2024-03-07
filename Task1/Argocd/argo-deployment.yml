@@ -22,11 +22,7 @@ spec:
         - name: "image.repository"
           value: 654911848970.dkr.ecr.us-east-1.amazonaws.com/easyfundraising
         - name: "image.tag"
-          value: v1.1
-        - name: "service.type"
-          value: LoadBalancer
-        - name: "service.servicePort"
-          value: 5000
+          value: v1.0.21
   destination:
     server: https://kubernetes.default.svc
     namespace: test
