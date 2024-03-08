@@ -13,6 +13,9 @@ In the Docker image and container registry phase, a Flask application displaying
 
 ![image](https://github.com/Ravitejareddykamidi/DevOps-Task-Easyfundraising/assets/51575336/1926d2e8-3c1d-4794-939a-c7252c4a8961)
 
+![image](https://github.com/Ravitejareddykamidi/DevOps-Task-Easyfundraising/assets/51575336/667179eb-afe2-46d2-a636-a520adb8f140)
+
+
 
 3: Helm Chart and Helm Repository
 For Helm chart and repository management, the sample application was packaged as a Helm chart. An S3 bucket served as the designated Helm repository, providing an organized structure for storing charts. The Helm CLI was utilized to create, package, and push the Helm chart into the S3 repository. Furthermore, an index.yaml file was meticulously generated for the Helm chart repository.
